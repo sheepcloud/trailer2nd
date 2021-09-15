@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div id="player"></div>
+
+    <p>
+
+    <select name="movieName" id="movieName">
+    </select>
+
+    <script>
+      var tag = document.createElement('script');
+
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      var suspendEvent = false;
+      var player;
+
+      var videoList = [
+        { videoId: 'jwMqVpzpjA8', start: 1248, title: '本当にヤバイ!!恐怖の牛頸ダム大突撃と笑ったら死ぬ！十三佛で実証実験！' },
+        { videoId: 'KLiUwMF9gBY', start: 885, title: '【前編】ここで何があった？佐賀最恐スポット！イノチャン山荘恐怖の大捜索！' },
+        { videoId: 'hm7AL1zsg-w', start: 870, title: '【後編】ここで何があった？佐賀最恐スポット！イノチャン山荘恐怖の大捜索！' },
+        { videoId: 'hGYHzWIYReo', start: 910, title: '幽霊ペンション＆横向ロッジ！福島2大肝試しスポットスペシャル' },
+        { videoId: 'Z3gbkRWDKNw', start: 1155, title: '【前編】封印された心霊スポット！赤い部屋・解禁スペシャル' },
+        { videoId: 'ZItbGdnklac', start: 832, title: '【後編】封印された心霊スポット！赤い部屋・解禁スペシャル' },
+        { videoId: 'eRxP4RM7UKU', start: 932, title: '怪奇！心霊？珍スポット探検発見3連発スペシャル！' },
+        { videoId: '0GdZOBCFkwk', start: 777, title: '静岡最恐スポット大突撃！廃ホテルで見つけてはいけないモノを見つけてしまった—。' },
+        { videoId: 'G2t-6o05_i8', start: 1226, title: 'テレビ特集中止！禁断の八木山橋！宮城最恐のヤバいスポット2本立てスペシャル' },
+        { videoId: 'reohH5DMg6M', start: 1012, title: '【前編】最恐スポットで真夏の肝試し！奇怪な廃小屋も発見！朝鮮トンネルスペシャル！' },
+        { videoId: 'HuS9ZRwTcAU', start: 866, title: '【後編】朝鮮トンネルで実証実験！一同恐怖の事態発生！二股隧道の分かれ道は存在した!?' },
+        { videoId: 'U-Oaarq4lzk', start: 871, title: '本当にヤバい！最恐スポット首狩神社で最悪の遭遇!?現場騒然の緊急事態発生！'},
+        { videoId: 'yK8Jdt8FTGU', start: 916, title: '【行ってはいけない場所】いもんたって知ってる？'},
+        { videoId: 'u5iQ_CanP_o', start: 1039, title: '【前編】岡山最恐スポット！キューピーの館＆戦慄のヤバイ家スペシャル'},
+        { videoId: '6vtmfh8Fk20', start: 856, title: '【後編】戦慄の家で恐怖の実証実験！岡山最恐のヤバイ家スペシャル'},
+        { videoId: 'Zg5RWvQIS68', start: 955, title: ' 関西の最恐心霊スポット20カ所行脚！京阪神まとめて大突撃スペシャル！ '},
+        { videoId: '9hIvie_F7FM', start: 1249, title: ' 取り残された廃屋の謎を追え！決死の撮影で一同を襲う恐怖の展開と禁断の全貌！'},
+        { videoId: 'RCEehRh0ywA', start: 995, title: ' 恐怖！ホテルセリーヌの呪われた妊婦絵を撮る！長野のヤバい心霊スポット大突撃スペシャル'},
+        { videoId: '5k-MQ5j9Kqw', start: 1286, title: ' ある少女と鉄格子の家を巡る恐怖の心霊スポットレポート'},
+        { videoId: '5-rqUxP8C1o', start: 1109, title: ' 恐怖！心霊ミステリー・真夜中の怖いドライブスペシャル！'},
+        { videoId: '3otG98Wkgio', start: 1114, title: ' 解禁！封印されたホテル皇邸・禁断の大潜入スペシャル'},
+        { videoId: 'tHNJQOdFGn0', start: 1168, title: '【前編】呪われた廃テーマパーク！最期のロシア村スペシャル'},
+        { videoId: '4JRB9820qsA', start: 1362, title: '【後編】呪われた廃テーマパーク！最期のロシア村スペシャル'},
+        { videoId: 'bxWmwGUyDR0', start: 1674, title: '夏の特別編2021'},
+      ];
+      videoIndex = 0;
+
+      function onYouTubeIframeAPIReady() {
+        const selectMovieName = document.getElementById('movieName');
+
+        videoList.forEach((item, index, array) => {
+          const option = document.createElement('option'); //option�v�f��V�������
+          option.value = index; //option�v�f�̒l�ɁA���j���[�����ʂł���ԍ����w�肷��
+          option.innerHTML = "[" + (index + 1) + "/" + array.length + "] " + item.title;; //���[�U�[�����̕\���Ƃ��ă��j���[�����w�肷��
+          selectMovieName.appendChild(option); //�Z���N�g�{�b�N�X��option�v�f��ǉ�����
+        });
+
+        selectMovieName.addEventListener('change', (e) => {
+          if (suspendEvent) {
+            suspendEvent = false;
+            return;
+          }
+          videoIndex = e.target.value;
+          player.loadVideoById(videoList[videoIndex].videoId, videoList[videoIndex].start);
+        })
+
+        player = new YT.Player('player', {
+          height: '360',
+          width: '640',
+          videoId: videoList[videoIndex].videoId,
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          },
+          playerVars: {
+            start: videoList[videoIndex].start,
+          }
+        });
+      }
+
+      function onPlayerReady(event) {
+        event.target.playVideo();
+      }
+
+      function onPlayerStateChange(event) {
+        // 再生完了
+        if (event.data == 0) {
+          videoIndex++;
+          if (videoIndex >= videoList.length) { return; }
+
+          // 次のビデオを再生
+          event.target.loadVideoById(videoList[videoIndex].videoId, videoList[videoIndex].start);
+
+          // セレクトボックスの要素を選択
+          suspendEvent = true;
+          const selectMovieName = document.getElementById('movieName');
+          selectMovieName[videoIndex].selected = true;
+        }
+      }
+
+      function stopVideo() {
+        player.stopVideo();
+      }
+    </script>
+  </body>
+</html>
